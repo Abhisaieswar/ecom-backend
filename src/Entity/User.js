@@ -11,13 +11,19 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
 var typeorm_1 = require("typeorm");
+var Cart_1 = require("./Cart");
+var Orders_1 = require("./Orders");
 var User = /** @class */ (function () {
     function User() {
     }
     __decorate([
-        (0, typeorm_1.PrimaryGeneratedColumn)(),
+        (0, typeorm_1.PrimaryColumn)(),
         __metadata("design:type", Number)
     ], User.prototype, "id", void 0);
+    __decorate([
+        (0, typeorm_1.Column)(),
+        __metadata("design:type", String)
+    ], User.prototype, "username", void 0);
     __decorate([
         (0, typeorm_1.Column)('text', { nullable: true }),
         __metadata("design:type", String)
@@ -30,6 +36,18 @@ var User = /** @class */ (function () {
         (0, typeorm_1.Column)('text', { nullable: true }),
         __metadata("design:type", String)
     ], User.prototype, "phone", void 0);
+    __decorate([
+        (0, typeorm_1.Column)("text", { nullable: true }),
+        __metadata("design:type", String)
+    ], User.prototype, "password", void 0);
+    __decorate([
+        (0, typeorm_1.OneToMany)(function () { return Orders_1.Orders; }, function (order) { return order.user; }),
+        __metadata("design:type", Array)
+    ], User.prototype, "orders", void 0);
+    __decorate([
+        (0, typeorm_1.OneToMany)(function () { return Cart_1.Cart; }, function (cart) { return cart.user; }),
+        __metadata("design:type", Array)
+    ], User.prototype, "cart", void 0);
     User = __decorate([
         (0, typeorm_1.Entity)()
     ], User);

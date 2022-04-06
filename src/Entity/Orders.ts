@@ -1,10 +1,14 @@
-import {Entity, PrimaryGeneratedColumn, Column} from "typeorm"; 
+import {Entity, PrimaryColumn, Column, Timestamp, ManyToOne} from "typeorm"; 
+import { User } from "./User";
 
 @Entity()
 
 export class Orders 
 {
-    @PrimaryGeneratedColumn()
+    @PrimaryColumn()
+    uniqueorder:string
+
+    @Column()
     id:number;
 
     @Column('text',{nullable:true})
@@ -28,7 +32,7 @@ export class Orders
     @Column('numeric',{ nullable: true })
     cartquantity:number;
 
-    @Column('date',{ nullable: true })
+    @Column('timestamp')
     ordereddate:Date;
 
     @Column('numeric',{ nullable: true })
@@ -36,4 +40,7 @@ export class Orders
 
     @Column('text',{ nullable: true })
     status:String;
+
+    @ManyToOne(()=>User,(user)=>user.orders)
+    user:User
 }

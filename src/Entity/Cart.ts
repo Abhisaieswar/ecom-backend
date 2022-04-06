@@ -1,4 +1,5 @@
-import {Entity,PrimaryColumn, Column} from "typeorm"; 
+import {Entity,PrimaryColumn, Column, ManyToOne} from "typeorm"; 
+import { User } from "./User";
 
 @Entity()
 
@@ -20,6 +21,9 @@ export class Cart
     rating:number;
 
     @PrimaryColumn()
+    uniquecart:string
+
+    @Column()
     title:string;
 
     @Column()
@@ -27,4 +31,7 @@ export class Cart
 
     @Column()
     cartquantity:number;
+
+    @ManyToOne(()=>User,(user)=>user.cart)
+    user:User
 }

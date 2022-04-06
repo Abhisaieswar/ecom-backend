@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Cart = void 0;
 var typeorm_1 = require("typeorm");
+var User_1 = require("./User");
 var Cart = /** @class */ (function () {
     function Cart() {
     }
@@ -37,6 +38,10 @@ var Cart = /** @class */ (function () {
     __decorate([
         (0, typeorm_1.PrimaryColumn)(),
         __metadata("design:type", String)
+    ], Cart.prototype, "uniquecart", void 0);
+    __decorate([
+        (0, typeorm_1.Column)(),
+        __metadata("design:type", String)
     ], Cart.prototype, "title", void 0);
     __decorate([
         (0, typeorm_1.Column)(),
@@ -46,6 +51,10 @@ var Cart = /** @class */ (function () {
         (0, typeorm_1.Column)(),
         __metadata("design:type", Number)
     ], Cart.prototype, "cartquantity", void 0);
+    __decorate([
+        (0, typeorm_1.ManyToOne)(function () { return User_1.User; }, function (user) { return user.cart; }),
+        __metadata("design:type", User_1.User)
+    ], Cart.prototype, "user", void 0);
     Cart = __decorate([
         (0, typeorm_1.Entity)()
     ], Cart);
