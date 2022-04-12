@@ -17,7 +17,7 @@ var User = /** @class */ (function () {
     function User() {
     }
     __decorate([
-        (0, typeorm_1.PrimaryColumn)(),
+        (0, typeorm_1.PrimaryGeneratedColumn)(),
         __metadata("design:type", Number)
     ], User.prototype, "id", void 0);
     __decorate([

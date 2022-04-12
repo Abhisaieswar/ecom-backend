@@ -5,22 +5,19 @@ import {Cart} from './Entity/Cart';
 import { User } from "./Entity/User";
 import { Orders } from "./Entity/Orders";
 import * as cors from 'cors'
-import {v4 as uuid, v4} from 'uuid'
+import {v4} from 'uuid'
 
 const jwt=require('jsonwebtoken')
-
 
 const express = require("express")
 const app = express()
 app.use(express.json())
-
 
 //module.exports = 
 //"entities": [`${__dirname}/src/Entity/*.js`],
 
 app.use(cors())
 app.options('*', cors())
-
 
 
 const initializeServerAndGetConnection=async()=>{
@@ -44,8 +41,6 @@ const initializeServerAndGetConnection=async()=>{
         console.log(err)
     }
 }
-
-
 
 initializeServerAndGetConnection()
 
@@ -95,7 +90,7 @@ app.get("/getusername",async(req:Request,res:Response)=>{       //gets all produ
     }
 
     catch(err){
-        console.log(err,"**************************************")
+        console.log(err)
     }
 })
 
@@ -212,11 +207,12 @@ app.get("/getorders/",async (req:Request,res:Response)=>{
             jwt.verify(jwt_token,"secret",async(error,payload)=>{
                 if(error)
                 {
+                    res.status(400)
                     res.send("Invalid access token");
                 }
                 else 
                 {
-                    const data=await entityManager.find(Orders,{where:{user:payload.userid}})
+                    const data=await entityManager.find(Orders,{where:{user:payload.userid},order:{id:"ASC"}})
                     res.send(data)
                 }
             })
@@ -252,6 +248,7 @@ app.get("/getorder/:id",async (req:Request,res:Response)=>{
             jwt.verify(jwt_token,"secret",async(error,payload)=>{
                 if(error)
                 {
+                    res.status(400)
                     res.send("Invalid access token");
                 }
                 else 
@@ -262,7 +259,6 @@ app.get("/getorder/:id",async (req:Request,res:Response)=>{
                 }
             })
         }
-        
     }
     catch(err)
     {
@@ -295,11 +291,12 @@ app.get("/getuser",async (req:Request,res:Response)=>{
             jwt.verify(jwt_token,"secret",async(error,payload)=>{
                 if(error)
                 {
+                    res.status(400)
                     res.send("Invalid access token");
                 }
                 else 
                 {
-                    const data=await entityManager.find(User)
+                    const data=await entityManager.find(User,{where:{username:payload.username}})
                     res.send(data)
                 }
             })
@@ -324,23 +321,23 @@ app.post("/login/",async(req:Request,res:Response)=>{
         let {username,password}=req.body;
         
         const user=await entityManager.find(User,{where:{username,password}})
-        console.log(user)
+        
         if(user.length===0)
         {
             res.status(400)
             res.send({not:"User Not Found"})
         }
+
         else
         {
             const payload={
                 username:username,
                 userid:user[0].id
             }
-            console.log(payload,".............................////////////////////...................")
 
             const jwt_token=jwt.sign(payload,"secret")
 
-            res.send({jwt_token})       //should send an object as response
+            res.send({jwt_token})   
         }
     }
 
@@ -373,6 +370,7 @@ app.post("/products/",async(req:Request,res:Response)=>{
             jwt.verify(jwt_token,"secret",async(error,payload)=>{
                 if(error)
                 {
+                    res.status(400)
                     res.send("Invalid access token");
                 }
                 else 
@@ -385,6 +383,33 @@ app.post("/products/",async(req:Request,res:Response)=>{
         }
     }
 
+    catch(err){
+        console.log(err.message)
+    }
+})
+
+app.post("/signup",async(req:Request,res:Response)=>{
+    try{
+        res.setHeader("Access-Control-Allow-Origin", "*")
+        res.setHeader("Access-Control-Allow-Credentials", "true");
+        res.setHeader("Access-Control-Max-Age", "1800");
+        res.setHeader("Access-Control-Allow-Headers", "content-type");
+        res.setHeader( "Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, PATCH, OPTIONS" ); 
+        
+        const {username,password1}=req.body
+        const users=await entityManager.find(User,{where:{username}})
+        if(users.length===0)
+        {
+            await entityManager.insert(User,{username,password:password1})
+            res.status(200)
+            res.send({msg:"success"})
+        }
+        else 
+        {
+            res.status(400)
+            res.send({msg:"failed"})
+        }
+    }
     catch(err){
         console.log(err.message)
     }
@@ -414,6 +439,7 @@ app.post("/cart/",async (req:Request,res:Response)=>{
             jwt.verify(jwt_token,"secret",async(error,payload)=>{
                 if(error)
                 {
+                    res.status(400)
                     res.send("Invalid access token");
                 }
                 else 
@@ -455,6 +481,7 @@ app.post("/ordersdata/",async (req:Request,res:Response)=>{
             jwt.verify(jwt_token,"secret",async(error,payload)=>{
                 if(error)
                 {
+                    res.status(400)
                     res.send("Invalid access token");
                 }
                 else 
@@ -499,6 +526,7 @@ app.post("/adduser/",async (req:Request,res:Response)=>{
             jwt.verify(jwt_token,"secret",async(error,payload)=>{
                 if(error)
                 {
+                    res.status(400)
                     res.send("Invalid access token");
                 }
                 else 
@@ -543,13 +571,14 @@ app.put("/products/:id",async(req:Request,res:Response)=>{
             jwt.verify(jwt_token,"secret",async(error,payload)=>{
                 if(error)
                 {
+                    res.status(400)
                     res.send("Invalid access token");
                 }
                 else 
                 {
                     let {id}=req.params
                     let {brand,imageurl,price,rating,title,quantity}=req.body;
-                    console.log(req.body)
+
                     if(brand!=""){
                         await entityManager.update(Productsdetails,id,{brand})
                     }
@@ -589,7 +618,6 @@ app.put("/updateitem/:title",async(req:Request,res:Response)=>{
         res.setHeader("Access-Control-Allow-Headers", "content-type");
         res.setHeader( "Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, PATCH, OPTIONS" ); 
         
-        let jwt_token;
         const authHeader=req.headers["authorization"]
         if(authHeader!==undefined)
         {
@@ -605,6 +633,7 @@ app.put("/updateitem/:title",async(req:Request,res:Response)=>{
             jwt.verify(jwt_token,"secret",async(error,payload)=>{
                 if(error)
                 {
+                    res.status(400)
                     res.send("Invalid access token");
                 }
                 else 
@@ -647,6 +676,7 @@ app.put("/updatecart/:id",async(req:Request,res:Response)=>{
             jwt.verify(jwt_token,"secret",async(error,payload)=>{
                 if(error)
                 {
+                    res.status(400)
                     res.send("Invalid access token");
                 }
                 else 
@@ -688,6 +718,7 @@ app.put("/updatestatus/:id",async(req:Request,res:Response)=>{
             jwt.verify(jwt_token,"secret",async(error,payload)=>{
                 if(error)
                 {
+                    res.status(400)
                     res.send("Invalid access token");
                 }
                 else 
@@ -713,7 +744,8 @@ app.put("/updateuser/:id",async(req:Request,res:Response)=>{
         res.setHeader("Access-Control-Max-Age", "1800");
         res.setHeader("Access-Control-Allow-Headers", "content-type");
         res.setHeader( "Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, PATCH, OPTIONS" ); 
-        
+        const id=req.params
+
         let jwt_token;
         const authHeader=req.headers["authorization"]
         if(authHeader!==undefined)
@@ -730,12 +762,16 @@ app.put("/updateuser/:id",async(req:Request,res:Response)=>{
             jwt.verify(jwt_token,"secret",async(error,payload)=>{
                 if(error)
                 {
+                    res.status(400)
                     res.send("Invalid access token");
                 }
                 else 
                 {
                     const {name,address,phone,id}=req.body;
-                    await entityManager.update(User,id,{name,address,phone})   
+                    const d=await entityManager.find(User,id)
+                    console.log(d,"user*************************************")
+                    await entityManager.update(User,id,{name,address,phone}) 
+                    res.send("success")  
                 }
             })
         }
@@ -769,6 +805,7 @@ app.delete("/deletecartitem/:id",async(req:Request,res:Response)=>{
             jwt.verify(jwt_token,"secret",async(error,payload)=>{
                 if(error)
                 {
+                    res.status(400)
                     res.send("Invalid access token");
                 }
                 else 
@@ -809,6 +846,7 @@ app.delete("/deletecart/",async(req:Request,res:Response)=>{
             jwt.verify(jwt_token,"secret",async(error,payload)=>{
                 if(error)
                 {
+                    res.status(400)
                     res.send("Invalid access token");
                 }
                 else 
@@ -848,6 +886,7 @@ app.delete("/products/:id",async(req:Request,res:Response)=>{
             jwt.verify(jwt_token,"secret",async(error,payload)=>{
                 if(error)
                 {
+                    res.status(400)
                     res.send("Invalid access token");
                 }
                 else 

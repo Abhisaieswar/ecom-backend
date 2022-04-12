@@ -1,4 +1,4 @@
-import {Entity, PrimaryColumn, Column, OneToMany} from "typeorm"; 
+import {Entity, PrimaryGeneratedColumn, Column, OneToMany} from "typeorm"; 
 import { Cart } from "./Cart";
 import { Orders } from "./Orders";
 
@@ -6,7 +6,7 @@ import { Orders } from "./Orders";
 
 export class User 
 {
-    @PrimaryColumn()
+    @PrimaryGeneratedColumn()
     id:number;
 
     @Column()

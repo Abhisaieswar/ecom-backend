@@ -1,4 +1,4 @@
-import {Entity, PrimaryColumn, Column, Timestamp, ManyToOne} from "typeorm"; 
+import {Entity, PrimaryColumn, Column, ManyToOne,PrimaryGeneratedColumn} from "typeorm"; 
 import { User } from "./User";
 
 @Entity()
@@ -8,7 +8,7 @@ export class Orders
     @PrimaryColumn()
     uniqueorder:string
 
-    @Column()
+    @PrimaryGeneratedColumn()
     id:number;
 
     @Column('text',{nullable:true})

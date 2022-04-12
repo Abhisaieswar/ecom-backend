@@ -122,7 +122,7 @@ app.get("/getusername", function (req, res) { return __awaiter(void 0, void 0, v
             }
         }
         catch (err) {
-            console.log(err, "**************************************");
+            console.log(err);
         }
         return [2 /*return*/];
     });
@@ -242,9 +242,10 @@ app.get("/getorders/", function (req, res) { return __awaiter(void 0, void 0, vo
                         switch (_a.label) {
                             case 0:
                                 if (!error) return [3 /*break*/, 1];
+                                res.status(400);
                                 res.send("Invalid access token");
                                 return [3 /*break*/, 3];
-                            case 1: return [4 /*yield*/, entityManager.find(Orders_1.Orders, { where: { user: payload.userid } })];
+                            case 1: return [4 /*yield*/, entityManager.find(Orders_1.Orders, { where: { user: payload.userid }, order: { id: "ASC" } })];
                             case 2:
                                 data = _a.sent();
                                 res.send(data);
@@ -285,6 +286,7 @@ app.get("/getorder/:id", function (req, res) { return __awaiter(void 0, void 0, 
                         switch (_a.label) {
                             case 0:
                                 if (!error) return [3 /*break*/, 1];
+                                res.status(400);
                                 res.send("Invalid access token");
                                 return [3 /*break*/, 3];
                             case 1:
@@ -330,9 +332,10 @@ app.get("/getuser", function (req, res) { return __awaiter(void 0, void 0, void 
                         switch (_a.label) {
                             case 0:
                                 if (!error) return [3 /*break*/, 1];
+                                res.status(400);
                                 res.send("Invalid access token");
                                 return [3 /*break*/, 3];
-                            case 1: return [4 /*yield*/, entityManager.find(User_1.User)];
+                            case 1: return [4 /*yield*/, entityManager.find(User_1.User, { where: { username: payload.username } })];
                             case 2:
                                 data = _a.sent();
                                 res.send(data);
@@ -364,7 +367,6 @@ app.post("/login/", function (req, res) { return __awaiter(void 0, void 0, void 
                 return [4 /*yield*/, entityManager.find(User_1.User, { where: { username: username, password: password } })];
             case 1:
                 user = _b.sent();
-                console.log(user);
                 if (user.length === 0) {
                     res.status(400);
                     res.send({ not: "User Not Found" });
@@ -374,9 +376,8 @@ app.post("/login/", function (req, res) { return __awaiter(void 0, void 0, void 
                         username: username,
                         userid: user[0].id
                     };
-                    console.log(payload, ".............................////////////////////...................");
                     jwt_token_5 = jwt.sign(payload, "secret");
-                    res.send({ jwt_token: jwt_token_5 }); //should send an object as response
+                    res.send({ jwt_token: jwt_token_5 });
                 }
                 return [3 /*break*/, 3];
             case 2:
@@ -411,6 +412,7 @@ app.post("/products/", function (req, res) { return __awaiter(void 0, void 0, vo
                         switch (_b.label) {
                             case 0:
                                 if (!error) return [3 /*break*/, 1];
+                                res.status(400);
                                 res.send("Invalid access token");
                                 return [3 /*break*/, 3];
                             case 1:
@@ -430,6 +432,41 @@ app.post("/products/", function (req, res) { return __awaiter(void 0, void 0, vo
             console.log(err.message);
         }
         return [2 /*return*/];
+    });
+}); });
+app.post("/signup", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, username, password1, users, err_3;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _b.trys.push([0, 5, , 6]);
+                res.setHeader("Access-Control-Allow-Origin", "*");
+                res.setHeader("Access-Control-Allow-Credentials", "true");
+                res.setHeader("Access-Control-Max-Age", "1800");
+                res.setHeader("Access-Control-Allow-Headers", "content-type");
+                res.setHeader("Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, PATCH, OPTIONS");
+                _a = req.body, username = _a.username, password1 = _a.password1;
+                return [4 /*yield*/, entityManager.find(User_1.User, { where: { username: username } })];
+            case 1:
+                users = _b.sent();
+                if (!(users.length === 0)) return [3 /*break*/, 3];
+                return [4 /*yield*/, entityManager.insert(User_1.User, { username: username, password: password1 })];
+            case 2:
+                _b.sent();
+                res.status(200);
+                res.send({ msg: "success" });
+                return [3 /*break*/, 4];
+            case 3:
+                res.status(400);
+                res.send({ msg: "failed" });
+                _b.label = 4;
+            case 4: return [3 /*break*/, 6];
+            case 5:
+                err_3 = _b.sent();
+                console.log(err_3.message);
+                return [3 /*break*/, 6];
+            case 6: return [2 /*return*/];
+        }
     });
 }); });
 app.post("/cart/", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
@@ -456,6 +493,7 @@ app.post("/cart/", function (req, res) { return __awaiter(void 0, void 0, void 0
                         switch (_b.label) {
                             case 0:
                                 if (!error) return [3 /*break*/, 1];
+                                res.status(400);
                                 res.send("Invalid access token");
                                 return [3 /*break*/, 3];
                             case 1:
@@ -501,6 +539,7 @@ app.post("/ordersdata/", function (req, res) { return __awaiter(void 0, void 0, 
                         switch (_b.label) {
                             case 0:
                                 if (!error) return [3 /*break*/, 1];
+                                res.status(400);
                                 res.send("Invalid access token");
                                 return [3 /*break*/, 3];
                             case 1:
@@ -549,6 +588,7 @@ app.post("/adduser/", function (req, res) { return __awaiter(void 0, void 0, voi
                         switch (_b.label) {
                             case 0:
                                 if (!error) return [3 /*break*/, 1];
+                                res.status(400);
                                 res.send("Invalid access token");
                                 return [3 /*break*/, 3];
                             case 1:
@@ -596,12 +636,12 @@ app.put("/products/:id", function (req, res) { return __awaiter(void 0, void 0, 
                         switch (_b.label) {
                             case 0:
                                 if (!error) return [3 /*break*/, 1];
+                                res.status(400);
                                 res.send("Invalid access token");
                                 return [3 /*break*/, 14];
                             case 1:
                                 id = req.params.id;
                                 _a = req.body, brand = _a.brand, imageurl = _a.imageurl, price = _a.price, rating = _a.rating, title = _a.title, quantity = _a.quantity;
-                                console.log(req.body);
                                 if (!(brand != "")) return [3 /*break*/, 3];
                                 return [4 /*yield*/, entityManager.update(Productsdetails_1.Productsdetails, id, { brand: brand })];
                             case 2:
@@ -653,7 +693,7 @@ app.put("/products/:id", function (req, res) { return __awaiter(void 0, void 0, 
     });
 }); });
 app.put("/updateitem/:title", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var jwt_token_11, authHeader;
+    var authHeader;
     return __generator(this, function (_a) {
         try {
             res.setHeader("Access-Control-Allow-Origin", "*");
@@ -663,19 +703,20 @@ app.put("/updateitem/:title", function (req, res) { return __awaiter(void 0, voi
             res.setHeader("Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, PATCH, OPTIONS");
             authHeader = req.headers["authorization"];
             if (authHeader !== undefined) {
-                jwt_token_11 = authHeader.split(" ")[1];
+                jwt_token = authHeader.split(" ")[1];
             }
-            if (jwt_token_11 === undefined) {
+            if (jwt_token === undefined) {
                 res.status(401);
                 res.send("Invalid access token");
             }
             else {
-                jwt.verify(jwt_token_11, "secret", function (error, payload) { return __awaiter(void 0, void 0, void 0, function () {
+                jwt.verify(jwt_token, "secret", function (error, payload) { return __awaiter(void 0, void 0, void 0, function () {
                     var title, qty;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0:
                                 if (!error) return [3 /*break*/, 1];
+                                res.status(400);
                                 res.send("Invalid access token");
                                 return [3 /*break*/, 3];
                             case 1:
@@ -699,7 +740,7 @@ app.put("/updateitem/:title", function (req, res) { return __awaiter(void 0, voi
     });
 }); });
 app.put("/updatecart/:id", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var jwt_token_12, authHeader;
+    var jwt_token_11, authHeader;
     return __generator(this, function (_a) {
         try {
             res.setHeader("Access-Control-Allow-Origin", "*");
@@ -709,19 +750,20 @@ app.put("/updatecart/:id", function (req, res) { return __awaiter(void 0, void 0
             res.setHeader("Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, PATCH, OPTIONS");
             authHeader = req.headers["authorization"];
             if (authHeader !== undefined) {
-                jwt_token_12 = authHeader.split(" ")[1];
+                jwt_token_11 = authHeader.split(" ")[1];
             }
-            if (jwt_token_12 === undefined) {
+            if (jwt_token_11 === undefined) {
                 res.status(401);
                 res.send("Invalid access token");
             }
             else {
-                jwt.verify(jwt_token_12, "secret", function (error, payload) { return __awaiter(void 0, void 0, void 0, function () {
+                jwt.verify(jwt_token_11, "secret", function (error, payload) { return __awaiter(void 0, void 0, void 0, function () {
                     var id, qty;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0:
                                 if (!error) return [3 /*break*/, 1];
+                                res.status(400);
                                 res.send("Invalid access token");
                                 return [3 /*break*/, 3];
                             case 1:
@@ -745,7 +787,7 @@ app.put("/updatecart/:id", function (req, res) { return __awaiter(void 0, void 0
     });
 }); });
 app.put("/updatestatus/:id", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var jwt_token_13, authHeader;
+    var jwt_token_12, authHeader;
     return __generator(this, function (_a) {
         try {
             res.setHeader("Access-Control-Allow-Origin", "*");
@@ -755,19 +797,20 @@ app.put("/updatestatus/:id", function (req, res) { return __awaiter(void 0, void
             res.setHeader("Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, PATCH, OPTIONS");
             authHeader = req.headers["authorization"];
             if (authHeader !== undefined) {
-                jwt_token_13 = authHeader.split(" ")[1];
+                jwt_token_12 = authHeader.split(" ")[1];
             }
-            if (jwt_token_13 === undefined) {
+            if (jwt_token_12 === undefined) {
                 res.status(401);
                 res.send("Invalid access token");
             }
             else {
-                jwt.verify(jwt_token_13, "secret", function (error, payload) { return __awaiter(void 0, void 0, void 0, function () {
+                jwt.verify(jwt_token_12, "secret", function (error, payload) { return __awaiter(void 0, void 0, void 0, function () {
                     var id, st;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0:
                                 if (!error) return [3 /*break*/, 1];
+                                res.status(400);
                                 res.send("Invalid access token");
                                 return [3 /*break*/, 3];
                             case 1:
@@ -791,6 +834,57 @@ app.put("/updatestatus/:id", function (req, res) { return __awaiter(void 0, void
     });
 }); });
 app.put("/updateuser/:id", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var id, jwt_token_13, authHeader;
+    return __generator(this, function (_a) {
+        try {
+            res.setHeader("Access-Control-Allow-Origin", "*");
+            res.setHeader("Access-Control-Allow-Credentials", "true");
+            res.setHeader("Access-Control-Max-Age", "1800");
+            res.setHeader("Access-Control-Allow-Headers", "content-type");
+            res.setHeader("Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, PATCH, OPTIONS");
+            id = req.params;
+            authHeader = req.headers["authorization"];
+            if (authHeader !== undefined) {
+                jwt_token_13 = authHeader.split(" ")[1];
+            }
+            if (jwt_token_13 === undefined) {
+                res.status(401);
+                res.send("Invalid access token");
+            }
+            else {
+                jwt.verify(jwt_token_13, "secret", function (error, payload) { return __awaiter(void 0, void 0, void 0, function () {
+                    var _a, name_2, address, phone, id_1, d;
+                    return __generator(this, function (_b) {
+                        switch (_b.label) {
+                            case 0:
+                                if (!error) return [3 /*break*/, 1];
+                                res.status(400);
+                                res.send("Invalid access token");
+                                return [3 /*break*/, 4];
+                            case 1:
+                                _a = req.body, name_2 = _a.name, address = _a.address, phone = _a.phone, id_1 = _a.id;
+                                return [4 /*yield*/, entityManager.find(User_1.User, id_1)];
+                            case 2:
+                                d = _b.sent();
+                                console.log(d, "user*************************************");
+                                return [4 /*yield*/, entityManager.update(User_1.User, id_1, { name: name_2, address: address, phone: phone })];
+                            case 3:
+                                _b.sent();
+                                res.send("success");
+                                _b.label = 4;
+                            case 4: return [2 /*return*/];
+                        }
+                    });
+                }); });
+            }
+        }
+        catch (err) {
+            console.log(err.message);
+        }
+        return [2 /*return*/];
+    });
+}); });
+app.delete("/deletecartitem/:id", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var jwt_token_14, authHeader;
     return __generator(this, function (_a) {
         try {
@@ -809,55 +903,12 @@ app.put("/updateuser/:id", function (req, res) { return __awaiter(void 0, void 0
             }
             else {
                 jwt.verify(jwt_token_14, "secret", function (error, payload) { return __awaiter(void 0, void 0, void 0, function () {
-                    var _a, name_2, address, phone, id;
-                    return __generator(this, function (_b) {
-                        switch (_b.label) {
-                            case 0:
-                                if (!error) return [3 /*break*/, 1];
-                                res.send("Invalid access token");
-                                return [3 /*break*/, 3];
-                            case 1:
-                                _a = req.body, name_2 = _a.name, address = _a.address, phone = _a.phone, id = _a.id;
-                                return [4 /*yield*/, entityManager.update(User_1.User, id, { name: name_2, address: address, phone: phone })];
-                            case 2:
-                                _b.sent();
-                                _b.label = 3;
-                            case 3: return [2 /*return*/];
-                        }
-                    });
-                }); });
-            }
-        }
-        catch (err) {
-            console.log(err.message);
-        }
-        return [2 /*return*/];
-    });
-}); });
-app.delete("/deletecartitem/:id", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var jwt_token_15, authHeader;
-    return __generator(this, function (_a) {
-        try {
-            res.setHeader("Access-Control-Allow-Origin", "*");
-            res.setHeader("Access-Control-Allow-Credentials", "true");
-            res.setHeader("Access-Control-Max-Age", "1800");
-            res.setHeader("Access-Control-Allow-Headers", "content-type");
-            res.setHeader("Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, PATCH, OPTIONS");
-            authHeader = req.headers["authorization"];
-            if (authHeader !== undefined) {
-                jwt_token_15 = authHeader.split(" ")[1];
-            }
-            if (jwt_token_15 === undefined) {
-                res.status(401);
-                res.send("Invalid access token");
-            }
-            else {
-                jwt.verify(jwt_token_15, "secret", function (error, payload) { return __awaiter(void 0, void 0, void 0, function () {
                     var id;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0:
                                 if (!error) return [3 /*break*/, 1];
+                                res.status(400);
                                 res.send("Invalid access token");
                                 return [3 /*break*/, 3];
                             case 1:
@@ -880,7 +931,7 @@ app.delete("/deletecartitem/:id", function (req, res) { return __awaiter(void 0,
     });
 }); });
 app.delete("/deletecart/", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var jwt_token_16, authHeader;
+    var jwt_token_15, authHeader;
     return __generator(this, function (_a) {
         try {
             res.setHeader("Access-Control-Allow-Origin", "*");
@@ -890,18 +941,19 @@ app.delete("/deletecart/", function (req, res) { return __awaiter(void 0, void 0
             res.setHeader("Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, PATCH, OPTIONS");
             authHeader = req.headers["authorization"];
             if (authHeader !== undefined) {
-                jwt_token_16 = authHeader.split(" ")[1];
+                jwt_token_15 = authHeader.split(" ")[1];
             }
-            if (jwt_token_16 === undefined) {
+            if (jwt_token_15 === undefined) {
                 res.status(401);
                 res.send("Invalid access token");
             }
             else {
-                jwt.verify(jwt_token_16, "secret", function (error, payload) { return __awaiter(void 0, void 0, void 0, function () {
+                jwt.verify(jwt_token_15, "secret", function (error, payload) { return __awaiter(void 0, void 0, void 0, function () {
                     return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0:
                                 if (!error) return [3 /*break*/, 1];
+                                res.status(400);
                                 res.send("Invalid access token");
                                 return [3 /*break*/, 3];
                             case 1: return [4 /*yield*/, entityManager.clear(Cart_1.Cart)];
@@ -922,7 +974,7 @@ app.delete("/deletecart/", function (req, res) { return __awaiter(void 0, void 0
     });
 }); });
 app.delete("/products/:id", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var jwt_token_17, authHeader;
+    var jwt_token_16, authHeader;
     return __generator(this, function (_a) {
         try {
             res.setHeader("Access-Control-Allow-Origin", "*");
@@ -932,19 +984,20 @@ app.delete("/products/:id", function (req, res) { return __awaiter(void 0, void 
             res.setHeader("Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, PATCH, OPTIONS");
             authHeader = req.headers["authorization"];
             if (authHeader !== undefined) {
-                jwt_token_17 = authHeader.split(" ")[1];
+                jwt_token_16 = authHeader.split(" ")[1];
             }
-            if (jwt_token_17 === undefined) {
+            if (jwt_token_16 === undefined) {
                 res.status(401);
                 res.send("Invalid access token");
             }
             else {
-                jwt.verify(jwt_token_17, "secret", function (error, payload) { return __awaiter(void 0, void 0, void 0, function () {
+                jwt.verify(jwt_token_16, "secret", function (error, payload) { return __awaiter(void 0, void 0, void 0, function () {
                     var id;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0:
                                 if (!error) return [3 /*break*/, 1];
+                                res.status(400);
                                 res.send("Invalid access token");
                                 return [3 /*break*/, 3];
                             case 1:

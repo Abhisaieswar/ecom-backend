@@ -20,7 +20,7 @@ var Orders = /** @class */ (function () {
         __metadata("design:type", String)
     ], Orders.prototype, "uniqueorder", void 0);
     __decorate([
-        (0, typeorm_1.Column)(),
+        (0, typeorm_1.PrimaryGeneratedColumn)(),
         __metadata("design:type", Number)
     ], Orders.prototype, "id", void 0);
     __decorate([
